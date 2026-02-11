@@ -15,20 +15,101 @@ class ClassifierScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Image Classifier'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Colors.blue.shade500,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        actions: [
+          if (classifierState.selectedImage != null)
+            IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: () {
+                classifierNotifier.clearResults();
+              },
+              tooltip: 'Clear',
+            ),
+        ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Image Picker Section
-            ImagePickerSection(),
+            // Header
+            if (!classifierState.isModelLoaded)
+              Container(
+                padding: const EdgeInsets.all(16),
+                color: Colors.orange.shade100,
+                child: Row(
+                  children: [
+                    const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    const SizedBox(width: 12),
+                    const Text(
+                      'Loading AI model...',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
 
-            const SizedBox(height: 24),
+            // Error message
+            if (classifierState.error != null)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                margin: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.red),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.error_outline, color: Colors.red.shade700),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        classifierState.error!,
+                        style: TextStyle(color: Colors.red.shade700),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            // Image Picker Section
+            ImagePickerSection(
+              currentImage: classifierState.selectedImage,
+              onImageSelected: (image) {
+                classifierNotifier.classifyImage(image);
+              },
+            ),
 
             // Results Display
-            ResultsDisplay(),
+            if (classifierState.isLoading)
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Classifying image...',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            // Results
+            if (classifierState.results != null &&
+                classifierState.results!.isNotEmpty &&
+                !classifierState.isLoading)
+              ResultsDisplay(results: classifierState.results!),
           ],
         ),
       ),

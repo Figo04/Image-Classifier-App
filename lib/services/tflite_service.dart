@@ -10,8 +10,8 @@ class TfliteService {
   List<String>? _labels;
 
   // Model specifications
-  static const String modelPath = 'assets/mobilenet_v1_1.0_224_quant.tflite';
-  static const String labelsPath = 'assets/labels_mobilenet_quant_v1_224.txt';
+  static const String modelPath = 'lib/assets/mobilenet_v1_1.0_224_quant.tflite';
+  static const String labelsPath = 'lib/assets/labels.txt';
   static const int inputSize = 224; // Model input: 224x224 pixels
 
   // initialize model
