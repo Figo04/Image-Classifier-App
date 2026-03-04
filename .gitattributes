@@ -1,0 +1,10 @@
+# Ignore native platform folders for language detection
+windows/** linguist-vendored
+linux/** linguist-vendored
+macos/** linguist-vendored
+ios/** linguist-vendored
+android/** linguist-vendored
+web/** linguist-vendored
+
+# Explicitly mark Dart as the main language
+*.dart linguist-language=Dart
